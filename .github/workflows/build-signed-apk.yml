@@ -28,12 +28,11 @@ jobs:
       run: ./gradlew assembleRelease
 
     - name: Upload files to Telegram
-      uses: xz-dev/TelegramFileUploader@v1
+      uses: xz-dev/TelegramFileUploader@v1.1.1
       with:
         to-who: '-4267241570'
         message: 'infinity build'
-        files: |
-        app/build/outputs/apk/release/app-release.apk
+        files: app/build/outputs/apk/release/app-release.apk
       env:
         API_ID: ${{ secrets.TG_API_ID }}
         API_HASH: ${{ secrets.TG_API_HASH }}
