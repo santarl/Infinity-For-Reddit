@@ -26,6 +26,11 @@ import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
 
+import android.app.AlertDialog;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.text.InputType;
+
 /**
  * Created by alex on 2/23/18.
  */
