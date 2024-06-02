@@ -155,7 +155,6 @@ public class APIUtils {
 
         // Load the API key and username from the file
         try {
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "infinity_api_config.txt");
             FileInputStream fis = new FileInputStream(file);
             BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
             String line;
