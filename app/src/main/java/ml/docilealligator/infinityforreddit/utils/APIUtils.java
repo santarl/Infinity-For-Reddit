@@ -24,6 +24,7 @@ import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.content.DialogInterface;
 
 /**
  * Created by alex on 2/23/18.
@@ -189,7 +190,6 @@ public class APIUtils {
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
                 }
