@@ -64,9 +64,6 @@ public class Infinity extends Application implements LifecycleObserver {
     @Named("security")
     SharedPreferences mSecuritySharedPreferences;
 
-    public static String CLIENT_ID;
-    public static String USER_AGENT;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -80,26 +77,8 @@ public class Infinity extends Application implements LifecycleObserver {
         appLockTimeout = Long.parseLong(mSecuritySharedPreferences.getString(SharedPreferencesUtils.APP_LOCK_TIMEOUT, "600000"));
         isSecureMode = mSecuritySharedPreferences.getBoolean(SharedPreferencesUtils.SECURE_MODE, false);
 
-        // Load the API key and username from the file
-        try {
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "infinity_api_config.txt");
-            FileInputStream fis = new FileInputStream(file);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("API_TOKEN=")) {
-                    CLIENT_ID = line.substring("API_TOKEN=".length());
-                } else if (line.startsWith("USERNAME=")) {
-                    String username = line.substring("USERNAME=".length());
-                    USER_AGENT = "android:personal-app:0.0.1 (by /u/" + username + ")";
-                }
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Unable to load API key and username", Toast.LENGTH_SHORT).show();
-        }
-
+        // Initialize APIUtils
+        APIUtils.initialize(this);
         
         try {
             if (mSharedPreferences.getString(SharedPreferencesUtils.FONT_FAMILY_KEY, FontFamily.Default.name()).equals(FontFamily.Custom.name())) {

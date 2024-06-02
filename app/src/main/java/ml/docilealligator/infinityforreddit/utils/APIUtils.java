@@ -8,6 +8,15 @@ import java.util.Map;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
+import android.content.Context;
+import android.os.Environment;
+import android.widget.Toast;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * Created by alex on 2/23/18.
  */
@@ -25,6 +34,8 @@ public class APIUtils {
     public static final String STREAMABLE_API_BASE_URI = "https://api.streamable.com";
     public static final String ONLINE_CUSTOM_THEMES_API_BASE_URI = "http://127.0.0.1";
 
+    public static String CLIENT_ID;
+    public static String USER_AGENT;
     public static final String CLIENT_ID_KEY = "client_id";
     public static final String CLIENT_SECRET_KEY = "client_secret";
     public static final String IMGUR_CLIENT_ID = "Client-ID cc671794e0ab397";
@@ -110,6 +121,28 @@ public class APIUtils {
     public static final String REFERER_KEY = "Referer";
     public static final String REVEDDIT_REFERER = "https://www.reveddit.com/";
 
+    public static void initialize(Context context) {
+        // Load the API key and username from the file
+        try {
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "infinity_api_config.txt");
+            FileInputStream fis = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("API_TOKEN=")) {
+                    CLIENT_ID = line.substring("API_TOKEN=".length());
+                } else if (line.startsWith("USERNAME=")) {
+                    String username = line.substring("USERNAME=".length());
+                    USER_AGENT = "android:personal-app:0.0.1 (by /u/" + username + ")";
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(context, "Unable to load API key and username", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public static Map<String, String> getHttpBasicAuthHeader() {
         Map<String, String> params = new HashMap<>();
         String credentials = String.format("%s:%s", APIUtils.CLIENT_ID, "");
@@ -121,7 +154,7 @@ public class APIUtils {
     public static Map<String, String> getOAuthHeader(String accessToken) {
         Map<String, String> params = new HashMap<>();
         params.put(APIUtils.AUTHORIZATION_KEY, APIUtils.AUTHORIZATION_BASE + accessToken);
-        //params.put(APIUtils.USER_AGENT_KEY, APIUtils.USER_AGENT);
+        // params.put(APIUtils.USER_AGENT_KEY, APIUtils.USER_AGENT);
         return params;
     }
 
