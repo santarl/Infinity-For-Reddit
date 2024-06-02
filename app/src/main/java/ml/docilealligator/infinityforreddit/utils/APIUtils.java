@@ -172,7 +172,7 @@ public class APIUtils {
         Map<String, String> params = new HashMap<>();
         params.put(APIUtils.ORIGIN_KEY, APIUtils.REVEDDIT_ORIGIN);
         params.put(APIUtils.REFERER_KEY, APIUtils.REVEDDIT_REFERER);
-        params.put(APIUtils.USER_AGENT_KEY, Infinity.USER_AGENT);
+        params.put(APIUtils.USER_AGENT_KEY, APIUtils.USER_AGENT);
         return params;
     }
 }
