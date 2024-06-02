@@ -17,10 +17,19 @@ android {
             }
         }
     }
+    signingConfigs {
+        release {
+            storeFile file("/content/Infinity.jks")
+            storePassword "Infinity"
+            keyAlias "Infinity"
+            keyPassword "Infinity"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         minifiedRelease {
             initWith buildTypes.release
@@ -41,6 +50,7 @@ android {
 
     lint {
         disable 'MissingTranslation'
+        baseline = file("lint-baseline.xml")
     }
 
     bundle {

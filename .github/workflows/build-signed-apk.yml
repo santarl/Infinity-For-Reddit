@@ -1,0 +1,33 @@
+name: Build signed apk
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - shell: bash
+      run: echo "${{ inputs.keystore_b64 }}" | base64 -d > $GITHUB_WORKSPACE/Infinity.jks
+      if: inputs.keystore_b64
+
+    - name: Signed APK Builder
+      uses: santarl/build-signed-apk@main
+      with:
+        keystore_b64: ${{ secrets.keystore }}
+        keystore_password: ${{ secrets.keystore_password }}
+        key_alias: ${{ secrets.key_alias }}
+        key_password: ${{ secrets.key_password }}
+
+    - name: Upload apk
+      uses: actions/upload-artifact@v3
+      with:
+        name: Infinity-${{github.sha}}
+        path: app/build/outputs/apk/
+        if-no-files-found: error
