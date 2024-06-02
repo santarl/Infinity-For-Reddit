@@ -24,12 +24,6 @@ import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.content.DialogInterface;
-
-import android.app.AlertDialog;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.text.InputType;
 
 /**
  * Created by alex on 2/23/18.
@@ -135,12 +129,33 @@ public class APIUtils {
     public static final String REFERER_KEY = "Referer";
     public static final String REVEDDIT_REFERER = "https://www.reveddit.com/";
 
-
     public static void initialize(Context context) {
-        // Load the API key and username from the file in internal storage
+        // Check for permission
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission not granted, display toast and close the app
+            Toast.makeText(context, "Storage permission required", Toast.LENGTH_SHORT).show();
+            ((Activity) context).finish();
+            return;
+        }
+
+        // Check if file exists
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "infinity_api_config.txt");
+        if (!file.exists()) {
+            // File does not exist, create file and close the app
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(context, "Unable to create API config file", Toast.LENGTH_SHORT).show();
+                ((Activity) context).finish();
+                return;
+            }
+        }
+
+        // Load the API key and username from the file
         try {
-            // Open the file in internal storage
-            FileInputStream fis = context.openFileInput("infinity_api_config.txt");
+            FileInputStream fis = new FileInputStream(file);
             BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -150,56 +165,11 @@ public class APIUtils {
                     String username = line.substring("USERNAME=".length());
                     USER_AGENT = "android:personal-app:0.0.1 (by /u/" + username + ")";
                 }
-            Toast.makeText(context, "API config loaded for" + username, Toast.LENGTH_SHORT).show();
             }
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(context, "API config file not found. Please provide API Token and Username.", Toast.LENGTH_SHORT).show();
-            // If the file doesn't exist, prompt the user for API_TOKEN and USERNAME
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("API Configuration");
-            final EditText inputToken = new EditText(context);
-            final EditText inputUsername = new EditText(context);
-            inputToken.setInputType(InputType.TYPE_CLASS_TEXT);
-            inputUsername.setInputType(InputType.TYPE_CLASS_TEXT);
-            inputToken.setHint("Enter API Token");
-            inputUsername.setHint("Enter Username");
-            LinearLayout layout = new LinearLayout(context);
-            layout.setOrientation(LinearLayout.VERTICAL);
-            layout.addView(inputToken);
-            layout.addView(inputUsername);
-            builder.setView(layout);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String token = inputToken.getText().toString().trim();
-                    String username = inputUsername.getText().toString().trim();
-                    if (!token.isEmpty() && !username.isEmpty()) {
-                        // Save the API_TOKEN and USERNAME to the file
-                        try {
-                            FileOutputStream fos = context.openFileOutput("infinity_api_config.txt", Context.MODE_PRIVATE);
-                            fos.write(("API_TOKEN=" + token + "\n").getBytes());
-                            fos.write(("USERNAME=" + username + "\n").getBytes());
-                            fos.close();
-                            // Update the static variables
-                            CLIENT_ID = token;
-                            USER_AGENT = "android:personal-app:0.0.1 (by /u/" + username + ")";
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(context, "Error saving API config", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(context, "API Token and Username cannot be empty", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            builder.show();
+            Toast.makeText(context, "Unable to load API key and username", Toast.LENGTH_SHORT).show();
         }
     }
 
