@@ -16,6 +16,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import android.util.Log;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 
 /**
  * Created by alex on 2/23/18.
@@ -122,6 +130,29 @@ public class APIUtils {
     public static final String REVEDDIT_REFERER = "https://www.reveddit.com/";
 
     public static void initialize(Context context) {
+        // Check for permission
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission not granted, display toast and close the app
+            Toast.makeText(context, "Storage permission required", Toast.LENGTH_SHORT).show();
+            ((Activity) context).finish();
+            return;
+        }
+
+        // Check if file exists
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "infinity_api_config.txt");
+        if (!file.exists()) {
+            // File does not exist, create file and close the app
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(context, "Unable to create API config file", Toast.LENGTH_SHORT).show();
+                ((Activity) context).finish();
+                return;
+            }
+        }
+
         // Load the API key and username from the file
         try {
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "infinity_api_config.txt");
