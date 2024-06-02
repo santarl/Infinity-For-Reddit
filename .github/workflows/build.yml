@@ -13,24 +13,13 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Set-up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
     - name: Signed APK Builder
-      uses: santarl/build-signed-apk@v2.1
+      uses: santarl/build-signed-apk
       with:
         keystore_b64: ${{ secrets.keystore }}
         keystore_password: ${{ secrets.keystore_password }}
         key_alias: ${{ secrets.key_alias }}
         key_password: ${{ secrets.key_password }}
-
-    - name: Setup and build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: build -x lint
 
     - name: Upload apk
       uses: actions/upload-artifact@v3
