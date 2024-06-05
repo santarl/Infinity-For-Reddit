@@ -1,8 +1,8 @@
 name: Build signed apk
 
 on:
-  push:
-  pull_request:
+  # push:
+  # pull_request:
   workflow_dispatch:
 
 jobs:
@@ -27,16 +27,16 @@ jobs:
       shell: bash
       run: ./gradlew assembleRelease
 
-    - name: Upload files to Telegram
-      uses: xz-dev/TelegramFileUploader@v1.1.1
-      with:
-        to-who: '-4267241570'
-        message: 'infinity build'
-        files: app/build/outputs/apk/release/app-release.apk
-      env:
-        API_ID: ${{ secrets.TG_API_ID }}
-        API_HASH: ${{ secrets.TG_API_HASH }}
-        BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+    # - name: Upload files to Telegram
+    #   uses: xz-dev/TelegramFileUploader@v1.1.1
+    #   with:
+    #     to-who: '-4267241570'
+    #     message: 'infinity build'
+    #     files: app/build/outputs/apk/release/app-release.apk
+    #   env:
+    #     API_ID: ${{ secrets.TG_API_ID }}
+    #     API_HASH: ${{ secrets.TG_API_HASH }}
+    #     BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
