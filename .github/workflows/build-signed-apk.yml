@@ -27,13 +27,13 @@ jobs:
       shell: bash
       run: ./gradlew assembleRelease
 
-    - name: Upload to tg
-      env:
-        BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
-      run: |
-        curl -o telegram.sh https://raw.githubusercontent.com/fabianonline/telegram.sh/master/telegram
-        chmod +x telegram.sh
-        ./telegram.sh -t "$BOT_TOKEN" -c "-1004267241570" -f app/build/outputs/apk/release/app-release.apk "infinity build"
+    # - name: Upload to tg
+    #   env:
+    #     BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+    #   run: |
+    #     curl -o telegram.sh https://raw.githubusercontent.com/fabianonline/telegram.sh/master/telegram
+    #     chmod +x telegram.sh
+    #     ./telegram.sh -t "$BOT_TOKEN" -c "-1004267241570" -f app/build/outputs/apk/release/app-release.apk "infinity build"
 
     # - name: Upload files to Telegram
     #   uses: xz-dev/TelegramFileUploader@v1.1.1
