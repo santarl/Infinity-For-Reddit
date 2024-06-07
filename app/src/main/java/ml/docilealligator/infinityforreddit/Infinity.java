@@ -1,5 +1,6 @@
 package ml.docilealligator.infinityforreddit;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -24,13 +27,6 @@ import com.livefront.bridge.SavedStateHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import android.os.Environment;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,6 +43,7 @@ import ml.docilealligator.infinityforreddit.font.TitleFontFamily;
 import ml.docilealligator.infinityforreddit.utils.SharedPreferencesUtils;
 import ml.docilealligator.infinityforreddit.utils.Utils;
 import ml.docilealligator.infinityforreddit.utils.APIUtils;
+import android.content.pm.PackageManager;
 
 public class Infinity extends Application implements LifecycleObserver {
     public Typeface typeface;
@@ -80,7 +77,7 @@ public class Infinity extends Application implements LifecycleObserver {
 
         // Initialize APIUtils
         APIUtils.initialize(this);
-        
+
         try {
             if (mSharedPreferences.getString(SharedPreferencesUtils.FONT_FAMILY_KEY, FontFamily.Default.name()).equals(FontFamily.Custom.name())) {
                 typeface = Typeface.createFromFile(getExternalFilesDir("fonts") + "/font_family.ttf");
@@ -198,5 +195,20 @@ public class Infinity extends Application implements LifecycleObserver {
     public void onChangeAppLockEvent(ChangeAppLockEvent changeAppLockEvent) {
         appLock = changeAppLockEvent.appLock;
         appLockTimeout = changeAppLockEvent.appLockTimeout;
+    }
+
+    // Add this method to handle permission request result
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, reinitialize
+                APIUtils.initialize(this);
+            } else {
+                // Permission denied, inform the user
+                Toast.makeText(this, "Storage permission required", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

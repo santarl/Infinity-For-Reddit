@@ -133,9 +133,9 @@ public class APIUtils {
         // Check for permission
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission not granted, display toast and close the app
-            Toast.makeText(context, "Storage permission required", Toast.LENGTH_SHORT).show();
-            ((Activity) context).finish();
+            // Permission not granted, request permission
+            ActivityCompat.requestPermissions((Activity) context,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
             return;
         }
 
